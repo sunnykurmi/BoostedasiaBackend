@@ -1,6 +1,7 @@
 const { catchError } = require("../middlewares/catchError");
 const adminmodel = require("../models/adminmodel");
 const citymodel = require("../models/citymodel");
+const studentform = require("../models/StudentForm");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { sendtoken } = require("../utils/SendToken");
 
@@ -43,6 +44,20 @@ exports.adminusersignout = catchError(async (req, res, next) => {
   res.clearCookie("token");
   res.json({ message: "successfully signed out" });
 });
+
+
+
+///////////////////////student form////////////////////////
+
+exports.studentform = catchError(async (req, res, next) => {
+  const newform = await new studentform(req.body).save();
+  res.json({ message: "successfully form submitted" });
+  
+});
+
+
+
+
 
 
 

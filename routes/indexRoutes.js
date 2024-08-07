@@ -7,7 +7,8 @@ const {
   adminusersignout,
   admincreatecity,
   admineditcity,
-  admindeletecity
+  admindeletecity,
+  studentform
 } = require("../controllers/indexController");
 const { isAuthenticated } = require("../middlewares/auth");
 const router = express.Router();
@@ -15,7 +16,10 @@ const router = express.Router();
 //get
 router.get("/", homepage);
 
-//post /student
+//get
+router.post("/studentform", studentform);
+
+//post /admin
 router.post("/admin", isAuthenticated, admincurrentuser);
 
 //post//signup

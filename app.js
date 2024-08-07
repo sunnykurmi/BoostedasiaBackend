@@ -14,7 +14,7 @@ const { generatedErrors } = require("./middlewares/errors");
 app.use(logger("tiny"));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://boostedasia.org/",
     credentials: true,
   })
 );
