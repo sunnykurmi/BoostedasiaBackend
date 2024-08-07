@@ -12,9 +12,18 @@ const logger = require("morgan");
 const ErrorHandler = require("./utils/ErrorHandler");
 const { generatedErrors } = require("./middlewares/errors");
 app.use(logger("tiny"));
+
+const allowedOrigins = ["http://localhost:5173", "https://boostedasia.org/"];
 app.use(
   cors({
-    origin: "https://boostedasia.org/",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // Allow requests with no origin (like mobile apps or curl requests)
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
@@ -22,19 +31,6 @@ app.use(
 //bodyparser
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-//session and cookie
-const session = require("express-session");
-const cookieparser = require("cookie-parser");
-app.use(
-  session({
-    resave: true,
-    saveUninitialized: true,
-    secret: process.env.EXPRESS_SESSION_SECRET,
-  })
-);
-app.use(cookieparser());
-app.use(bodyParser.json({ limit: "10000000mb" }));
 
 app.use(
   bodyParser.urlencoded({
@@ -57,7 +53,6 @@ app.all("*", (req, res, next) => {
 });
 app.use(generatedErrors);
 
-app.listen(
-  process.env.PORT,
-  console.log(`server running on port ${process.env.PORT}`)
-);
+app.listen(process.env.PORT, '0.0.0.0', () => {
+  console.log(`server running on port ${process.env.PORT}`);
+});
