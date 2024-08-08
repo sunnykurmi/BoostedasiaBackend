@@ -13,7 +13,7 @@ const ErrorHandler = require("./utils/ErrorHandler");
 const { generatedErrors } = require("./middlewares/errors");
 app.use(logger("tiny"));
 
-const allowedOrigins = ["http://localhost:5173", "https://boostedasia.org/"];
+const allowedOrigins = ["http://localhost:5173","https://boost-ed-asia.vercel.app/"];
 app.use(
   cors({
     origin: function (origin, callback) {
