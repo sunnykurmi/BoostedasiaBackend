@@ -16,7 +16,10 @@ const router = express.Router();
 //get
 router.get("/", homepage);
 
-//get
+//post
+router.get("/studentform", homepage);
+
+//post
 router.post("/studentform", studentform);
 
 //post /admin
