@@ -20,7 +20,7 @@ router.get("/", homepage);
 router.post("/studentform", studentform);
 
 //get /admin
-router.get("/admin", isAuthenticated, admincurrentuser);
+router.get("/admin", admincurrentuser);
 
 //post//signup
 router.post("/admin/signup", adminusersignup);
