@@ -18,7 +18,12 @@ const citymodel = new mongoose.Schema(
       type: String,
       required: [true, "date is required"],
     },
-    studentsjoined: [],
+    studentsjoined: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "studentform", 
+      },
+    ],
   },
   { timestamps: true }
 );

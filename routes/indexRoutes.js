@@ -19,8 +19,8 @@ router.get("/", homepage);
 //get
 router.post("/studentform", studentform);
 
-//post /admin
-router.post("/admin", isAuthenticated, admincurrentuser);
+//get /admin
+router.get("/admin", isAuthenticated, admincurrentuser);
 
 //post//signup
 router.post("/admin/signup", adminusersignup);

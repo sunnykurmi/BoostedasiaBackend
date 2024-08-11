@@ -6,7 +6,7 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const { sendtoken } = require("../utils/SendToken");
 
 exports.homepage = catchError(async (req, res, next) => {
-  const allcities  = await citymodel.find().exec();
+  const allcities  = await citymodel.find().populate("studentsjoined").exec();
   res.json({ message: "homepage",allcities});
 });
 
@@ -49,20 +49,24 @@ exports.adminusersignout = catchError(async (req, res, next) => {
 
 
 ///////////////////////student form////////////////////////
-
 exports.studentform = catchError(async (req, res, next) => {
   const newform = await new studentform(req.body).save();
+  console.log(newform.joiningcity);
+  for (const city of newform.joiningcity) {
+    const cityModel = await citymodel.findOne({ cityname: city });
+    if (cityModel) {
+      cityModel.studentsjoined.push(newform._id);
+      await cityModel.save();
+    }
+  }
   res.json({ message: "successfully form submitted" });
-  
 });
 
 
 
 
 
-
-
-///////////////////////create room////////////////////////
+///////////////////////create city////////////////////////
 
 exports.admincreatecity = catchError(async (req, res, next) => {
   console.log(req.body);
