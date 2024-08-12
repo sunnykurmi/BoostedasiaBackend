@@ -1,13 +1,15 @@
 const { catchError } = require("../middlewares/catchError");
 const adminmodel = require("../models/adminmodel");
 const citymodel = require("../models/citymodel");
+const partner = require("../models/PartnerWithUs");
 const studentform = require("../models/StudentForm");
 const ErrorHandler = require("../utils/ErrorHandler");
 const { sendtoken } = require("../utils/SendToken");
 
 exports.homepage = catchError(async (req, res, next) => {
   const allcities  = await citymodel.find().populate("studentsjoined").exec();
-  res.json({ message: "homepage",allcities});
+  const allpartners = await partner.find().exec();
+  res.json({ message: "homepage",allcities , allpartners });
 });
 
 
@@ -21,7 +23,7 @@ exports.admincurrentuser = catchError(async (req, res, next) => {
   const loggedinuser = await adminmodel
     .findById(req.id)
     .exec();
-  res.json({ loggedinuser });
+  res.json({ loggedinuser  });
 });
 
 exports.adminusersignin = catchError(async (req, res, next) => {
@@ -62,6 +64,15 @@ exports.studentform = catchError(async (req, res, next) => {
   res.json({ message: "successfully form submitted" });
 });
 
+
+
+///////////////////////Partner With Us////////////////////////
+
+exports.partnerform = catchError(async (req, res, next) => {
+  const newform = await new partner(req.body).save();
+  res.json({ message: "successfully form submitted" });
+  
+});
 
 
 

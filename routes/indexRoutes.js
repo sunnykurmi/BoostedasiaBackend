@@ -8,7 +8,8 @@ const {
   admincreatecity,
   admineditcity,
   admindeletecity,
-  studentform
+  studentform,
+  partnerform
 } = require("../controllers/indexController");
 const { isAuthenticated } = require("../middlewares/auth");
 const router = express.Router();
@@ -16,11 +17,14 @@ const router = express.Router();
 //get
 router.get("/", homepage);
 
-//get
+//post
 router.post("/studentform", studentform);
 
+//post
+router.post("/partnerwithus", partnerform);
+
 //get /admin
-router.get("/admin", admincurrentuser);
+router.post("/admin", isAuthenticated, admincurrentuser);
 
 //post//signup
 router.post("/admin/signup", adminusersignup);
