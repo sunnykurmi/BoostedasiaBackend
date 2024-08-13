@@ -27,13 +27,24 @@ app.use(express.urlencoded({ extended: false }));
 //session and cookie
 const session = require("express-session");
 const cookieparser = require("cookie-parser");
+const MongoStore = require("connect-mongo");
+
 app.use(
   session({
     resave: true,
     saveUninitialized: true,
     secret: process.env.EXPRESS_SESSION_SECRET,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URL,
+      collectionName: 'sessions'
+    }),
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    },
   })
 );
+
 app.use(cookieparser());
 app.use(bodyParser.json({ limit: "10000000mb" }));
 
