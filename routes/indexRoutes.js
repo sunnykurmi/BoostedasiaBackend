@@ -24,7 +24,7 @@ router.post("/studentform", studentform);
 router.post("/partnerwithus", partnerform);
 
 //get /admin
-router.post("/admin", admincurrentuser);
+router.post("/admin", isAuthenticated, admincurrentuser);
 
 //post//signup
 router.post("/admin/signup", adminusersignup);
