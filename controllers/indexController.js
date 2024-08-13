@@ -27,7 +27,7 @@ exports.admincurrentuser = catchError(async (req, res, next) => {
 });
 
 exports.adminusersignin = catchError(async (req, res, next) => {
-  console.log("object");
+
   const founduser = await adminmodel
     .findOne({
       name: req.body.name,
