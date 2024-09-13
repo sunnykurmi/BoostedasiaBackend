@@ -9,7 +9,9 @@ const {
   admineditcity,
   admindeletecity,
   studentform,
-  partnerform
+  partnerform,
+  createroadmap,
+  allroadmap
 } = require("../controllers/indexController");
 const { isAuthenticated } = require("../middlewares/auth");
 const router = express.Router();
@@ -22,6 +24,15 @@ router.post("/studentform", studentform);
 
 //post
 router.post("/partnerwithus", partnerform);
+
+// ***************************
+
+// create roadmap routes
+
+//post
+router.post("/createroadmap", createroadmap);
+
+// ***************************
 
 //get /admin
 router.post("/admin", isAuthenticated, admincurrentuser);
@@ -37,6 +48,9 @@ router.get("/admin/signout", isAuthenticated, adminusersignout);
 
 //post//creatcity
 router.post("/admin/createcity", isAuthenticated, admincreatecity);
+
+//post//creatcity
+router.post("/admin/allroadmap", isAuthenticated, allroadmap);
 
 //post//editcity
 router.post("/admin/editcity/:id", isAuthenticated, admineditcity);

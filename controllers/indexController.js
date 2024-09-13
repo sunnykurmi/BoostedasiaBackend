@@ -2,8 +2,12 @@ const { catchError } = require("../middlewares/catchError");
 const adminmodel = require("../models/adminmodel");
 const citymodel = require("../models/citymodel");
 const partner = require("../models/PartnerWithUs");
+const Roadmaps = require("../models/roadmaps");
 const studentform = require("../models/StudentForm");
 const ErrorHandler = require("../utils/ErrorHandler");
+const { getChatCompletion } = require("../utils/openai");
+const { pdfcreater } = require("../utils/pdf.creater");
+const { sendmail } = require("../utils/sendmail");
 const { sendtoken } = require("../utils/SendToken");
 
 exports.homepage = catchError(async (req, res, next) => {
@@ -106,4 +110,147 @@ exports.admindeletecity = catchError(async (req, res, next) => {
     success: true,
     message: "city deleted successfully",
   });
+});
+
+// **********************
+
+exports.createroadmap = catchError(async (req, res, next) => {
+
+  // generate gpt response
+  let formdata = req.body;
+
+  let prompt = `
+    ***********
+    personal Details:
+
+    Full Name: ${formdata.fullname}
+    Gender: ${formdata.gender}
+    state: ${formdata.state}
+    City: ${formdata.city}
+
+     ***********
+    
+    my Academics:      
+
+    Class: ${formdata.class}
+
+    Educational board: ${formdata.educationBoard}
+
+    10th marks: ${formdata.tenthMarks}
+
+    11th Marks: ${formdata.eleventhMarks}
+
+    Stream: ${formdata.stream}
+
+    Do you want to study abroad? - ${formdata.abroadStudy}
+
+    What About SAT Exam? - ${formdata.aboutsatexam}
+
+    SAT Score- ${formdata.satScore}
+
+    Which english Proficiency test - ${formdata.englishtest}
+
+    Country Preferance - ${formdata.countrypreferance}
+
+    Dream University Name - ${formdata.dreamuniversity}
+
+    Are you preparing for any entrance examination? - ${formdata.entranceExam}
+
+    Which is the most challenging subject for you?: ${formdata.challengingSubject}
+
+    What is your short-term academic goal? - ${formdata.shortTermGoal}
+    
+    What is your long-term goal? - ${formdata.longTermGoal}
+    
+    ***********
+
+    other Details:
+    
+    family Annual Income: ${formdata.familyincome}
+
+    caste: ${formdata.caste}
+
+    physical disability: ${formdata.physicaldisabilities}
+
+     disabilities if any: ${formdata.physicaldisabilitiestype}
+
+    What do you want to become in the future: ${formdata.BecomeInFuture}
+
+    Interest Field Areas: ${formdata.interestField}
+    
+    ***********
+
+    Activities/Extracurriculars:
+    `;
+
+  formdata.activities.slice(1).forEach((activity, index) => {
+    prompt += `
+    Activity ${index + 1}:  
+  
+    Activity: ${activity.activityType}
+
+    Position / Role in the activity: ${activity.workingProfile}
+    
+    Organization/Company Name: ${activity.organizationName}
+
+    Description: ${activity.taskDescription}
+    
+    `;
+  });
+
+  let roadmap = await getChatCompletion(prompt);
+
+  // *********************************************
+
+  // convert pdf using this data
+
+  if(formdata.email && formdata.fullname && formdata.city && formdata.contact){
+
+    let {pdfpath,pdfname,roadmapuserfullname} =await pdfcreater(`${formdata.email.split('@')[0]}`,`${roadmap}`,`${formdata.fullname}`)
+    
+  // *********************************************
+    
+  // sending a mail using nodemailer
+    sendmail(req,res,next,pdfpath,formdata)
+
+    const createdRoadmap = await new Roadmaps({
+      name:formdata.fullname,
+      email:formdata.email,
+      contact:formdata.contact,
+      city:formdata.city,
+      pdflink:pdfpath,
+    })
+    await createdRoadmap.save()
+  
+    res.status(200).json({
+      success: true,
+      message: 'Roadmap has been generated and saved as PDF.',
+    })
+    
+  }else{
+    res.status(400).json({
+      success: false,
+      message: 'you have missing some feild!',
+    })
+  }
+
+  // *********************************************
+    
+  
+
+  
+});
+
+// **********************
+
+exports.allroadmap = catchError(async (req, res, next) => {
+
+  let roadmaps = await Roadmaps.find().exec()
+
+  res.status(200).json({
+    success: true,
+    message: "All roadmap",
+    roadmaps
+  });
+  
 });
