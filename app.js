@@ -18,6 +18,7 @@ app.use(
     credentials: true,
   })
 );
+
 //bodyparser
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
